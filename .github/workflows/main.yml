@@ -4,7 +4,7 @@ on:
   push:
     branches:
     - main
-    
+
 env:
   MY_AWS_REGION: 'ap-northeast-1'
   AWS_ROLENAME: 'githubActionsS3Role'
@@ -15,18 +15,18 @@ env:
 jobs:
   deploy:
     name: deploy to s3
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
-    steps: 
+    steps:
     - name: check out
       uses: actions/checkout@v3.5.3
     - name: configure AWS credentials with IAM Role
       uses: aws-actions/configure-aws-credentials@v2
-      with: 
+      with:
          role-to-assume: arn:aws:iam::${{secrets.AWS_ACCOUNT_ID}}:role/${{env.AWS_ROLENAME}}
          aws-region: ${{env.MY_AWS_REGION}}
     - name: copy files to S3
-      run: | 
+      run: |
           aws s3 sync ${{env.SOURCE_DIR}} s3://${{env.AWS_S3_BUCKET}}/${{env.DEST_DIR}}/ --exclude '.*git*'
